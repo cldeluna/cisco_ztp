@@ -181,9 +181,7 @@ def main():
         "aaa authorization exec default local",
         "aaa session-id common",
         "username admin privilege 15 secret eia!now",
-        "ip route vrf Mgmt-vrf 0.0.0.0 0.0.0.0 192.168.1.1",
-        "copy running-config startup-config"
-
+        "ip route vrf Mgmt-vrf 0.0.0.0 0.0.0.0 192.168.1.1"
     ]
     try:
         domain_name = "uwaco.com"
@@ -192,6 +190,7 @@ def main():
         cli.configurep('crypto key generate rsa modulus 2048')
         for cmd in base_config:
             cli.configurep(cmd)
+        cli.clip("copy running-config startup-config")
     except Exception as e:
         print("ERROR! Could not apply base config.")
         print(e)
