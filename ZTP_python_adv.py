@@ -112,7 +112,7 @@ def upgrade_required():
 def verify_dst_image_md5(image, src_md5, file_system='flash:/'):
     verify_md5 = 'verify /md5 ' + file_system + image
     print 'Verifying MD5 for ' + file_system + image
-    dst_md5 = cli.clip(verify_md5)
+    dst_md5 = cli.cli(verify_md5)
     if src_md5 in dst_md5:
         print '*** MD5 hashes match!! ***\n'
         return True
