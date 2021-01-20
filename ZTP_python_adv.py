@@ -39,13 +39,14 @@ def file_transfer(tftp_server, file, file_system='flash:/'):
     destination = file_system + file
     # Set commands to prepare for file transfer
     commands = ['file prompt quiet',
-                'ip tftp blocksize 8192'
+                'ip tftp blocksize 8192',
+                'ip http client source-interface Gi0/0'
                ]
     results = cli.configurep(commands)
     print '*** Successfully set "file prompt quiet" and 8192 block size on switch ***'
     # transfer_file = "copy tftp://%s/%s %s vrf Mgmt-vrf" % (tftp_server, file, destination)
-    transfer_file = "copy http://%s/%s %s vrf Mgmt-vrf" % (tftp_server, file, file_system)
-    # transfer_file = "copy http://%s/%s %s" % (tftp_server, file, file_system)
+    # transfer_file = "copy http://%s/%s %s vrf Mgmt-vrf" % (tftp_server, file, file_system)
+    transfer_file = "copy http://%s/%s %s" % (tftp_server, file, file_system)
     print("---->>>>> transfer_file is " + transfer_file)
     print 'Transferring %s to %s' % (file, file_system)
     transfer_results = cli.cli(transfer_file)
@@ -171,14 +172,17 @@ def main():
     time.sleep(10)
 
     print '*** Deploying Base Configuration ***'
+    hostname = "hostname SW_" + serial
     base_config = [
+        hostname,
         "interface Gi0/0 ; no shutdown ; description MGMT ; ip address dhcp ; end",
         "aaa new-model",
         "aaa authentication login default local",
         "aaa authorization exec default local",
         "aaa session-id common",
         "username admin privilege 15 secret eia!now",
-        "ip route vrf Mgmt-vrf 0.0.0.0 0.0.0.0 192.168.1.1"
+        "ip route vrf Mgmt-vrf 0.0.0.0 0.0.0.0 192.168.1.1",
+        "copy running-config startup-config"
 
     ]
     try:
