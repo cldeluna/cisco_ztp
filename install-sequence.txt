@@ -1,0 +1,64 @@
+
+Switch#install add file flash:cat9k_iosxe.16.12.01.SPA.bin activate commit 
+install_add_activate_commit: START Mon Jan 18 19:53:16 UTC 2021
+
+System configuration has been modified.
+Press Yes(y) to save the configuration and proceed.
+Press No(n) for proceeding without saving the configuration.
+Press Quit(q) to exit, you may save configuration and re-enter the command. [y/n/q]n
+
+*Jan 18 19:53:24.163: %INSTALL-5-INSTALL_START_INFO: Switch 1 R0/0: install_engine: Started install one-shot flash:cat9k_iosxe.16.12.01.SPA.bininstall_add_activate_commit: Adding PACKAGE
+install_add_activate_commit: Checking whether new add is allowed ....
+
+--- Starting initial file syncing ---
+Info: Finished copying flash:cat9k_iosxe.16.12.01.SPA.bin to the selected switch(es)
+Finished initial file syncing
+
+--- Starting Add ---
+Performing Add on all members
+  [1] Add package(s) on switch 1
+  [1] Finished Add on switch 1
+Checking status of Add on [1]
+Add: Passed on [1]
+Finished Add
+
+Image added. Version: 16.12.1.0.544
+install_add_activate_commit: Activating PACKAGE
+Following packages shall be activated:
+/flash/cat9k-wlc.16.12.01.SPA.pkg
+/flash/cat9k-webui.16.12.01.SPA.pkg
+/flash/cat9k-srdriver.16.12.01.SPA.pkg
+/flash/cat9k-sipspa.16.12.01.SPA.pkg
+/flash/cat9k-sipbase.16.12.01.SPA.pkg
+/flash/cat9k-rpboot.16.12.01.SPA.pkg
+/flash/cat9k-rpbase.16.12.01.SPA.pkg
+/flash/cat9k-guestshell.16.12.01.SPA.pkg
+/flash/cat9k-espbase.16.12.01.SPA.pkg
+/flash/cat9k-cc_srdriver.16.12.01.SPA.pkg
+
+This operation may require a reload of the system. Do you want to proceed? [y/n]
+
+
+
+
+Switch# install remove ?
+  file      Specify package to remove
+  inactive  Remove all in-active packages from device
+  profile   Specify profile to remove
+
+Switch# install remove ina
+Switch# install remove inactive 
+
+
+
+# Commands and EEM script
+
+show app-hosting list 
+
+
+event manager applet UPGRADE
+event none maxrun 600
+action 1.0 cli command "enable"
+action 2.0 cli command "install add file flash:cat9k_iosxe.16.12.02.SPA.bin activate commit" pattern  "\[y\/n\/q\]"
+action 2.1 cli command "n" pattern "proceed"
+action 2.2 cli command "y"
