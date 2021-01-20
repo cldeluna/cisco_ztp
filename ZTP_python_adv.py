@@ -20,15 +20,11 @@ img_cat9k_md5 = '0d3e18f63f9ca52b6b056b27aa0d09e5'
 software_version = 'Cisco IOS XE Software, Version 16.12.02'
 
 
-def configure_replace(file, file_system='flash:/'):
-    config_command = 'configure replace %s%s force' % (file_system, file)
-    config_repl = cli(config_command)
-    time.sleep(120)
 
 def check_file_exists(file, file_system='flash:/'):
     dir_check = 'dir ' + file_system + file
     print '*** Checking to see if %s exists on %s ***' % (file, file_system)
-    results = cli(dir_check)
+    results = cli.cli(dir_check)
     if 'No such file or directory' in results:
         print '*** The %s does NOT exist on %s ***' % (file, file_system)
         return False
@@ -38,32 +34,6 @@ def check_file_exists(file, file_system='flash:/'):
     else:
         raise ValueError("Unexpected output from check_file_exists")
 
-def deploy_eem_cleanup_script():
-    install_command = 'install remove inactive'
-    eem_commands = ['event manager applet cleanup',
-                    'event none maxrun 600',
-                    'action 1.0 cli command "enable"',
-                    'action 2.0 cli command "%s" pattern "\[y\/n\]"' % install_command,
-                    'action 2.1 cli command "y" pattern "proceed"',
-                    'action 2.2 cli command "y"'
-                    ]
-    results = configure(eem_commands)
-    print('*** Successfully configured cleanup EEM script on device! ***')
-    print(results)
-
-def deploy_eem_upgrade_script(image):
-    install_command = 'install add file flash:' + image + ' activate commit'
-    eem_commands = ['event manager applet upgrade',
-                    'event none maxrun 600',
-                    'action 1.0 cli command "enable"',
-                    'action 2.0 cli command "%s" pattern "[y/n/q]"' % install_command,
-                    'action 2.1 wait 10',
-                    'action 2.2 cli command "n" pattern "proceed"',
-                    'action 2.3 cli command "y"'
-                    ]
-    results = configure(eem_commands)
-    print("----->>> results of eem_commands:\n" + results)
-    print '*** Successfully configured upgrade EEM script on device! ***'
 
 def file_transfer(tftp_server, file, file_system='flash:/'):
     destination = file_system + file
@@ -71,18 +41,19 @@ def file_transfer(tftp_server, file, file_system='flash:/'):
     commands = ['file prompt quiet',
                 'ip tftp blocksize 8192'
                ]
-    results = configure(commands)
-    print '*** Successfully set "file prompt quiet" on switch ***'
+    results = cli.configurep(commands)
+    print '*** Successfully set "file prompt quiet" and 8192 block size on switch ***'
     # transfer_file = "copy tftp://%s/%s %s vrf Mgmt-vrf" % (tftp_server, file, destination)
     transfer_file = "copy http://%s/%s %s vrf Mgmt-vrf" % (tftp_server, file, file_system)
     # transfer_file = "copy http://%s/%s %s" % (tftp_server, file, file_system)
-    print("---->>>>> tansfere_file is " + transfer_file)
+    print("---->>>>> transfer_file is " + transfer_file)
     print 'Transferring %s to %s' % (file, file_system)
-    transfer_results = cli(transfer_file)
+    transfer_results = cli.cli(transfer_file)
     if 'OK' in transfer_results:
         print '*** %s was transferred successfully!!! ***' % (file)
     elif 'XXX Error opening XXX' in transfer_results:
         raise ValueError("XXX Failed Xfer XXX")
+
 
 def install_activate_commit(image):
 
@@ -90,26 +61,26 @@ def install_activate_commit(image):
 
     install_command = 'install add file flash:' + image + ' activate commit prompt-level none'
     print("---->>>>> install_command is " + install_command)
-    install_results = cli(install_command)
+    install_results = cli.cli(install_command)
     print('*** INSTALL Results ***')
     print(install_results)
 
 
 def find_certs():
-    certs = cli('show run | include crypto pki')
+    certs = cli.cli('show run | include crypto pki')
     if certs:
         certs_split = certs.splitlines()
         certs_split.remove('')
         for cert in certs_split:
             command = 'no %s' % (cert)
-            configure(command)
+            cli.configurep(command)
 
 def get_serial():
     try:
-        show_version = cli('show version')
+        show_version = cli.cli('show version')
     except pnp._pnp.PnPSocketError:
         time.sleep(90)
-        show_version = cli('show version')
+        show_version = cli.cli('show version')
     try:
         serial = re.search(r"System Serial Number\s+:\s+(\S+)", show_version).group(1)
     except AttributeError:
@@ -126,7 +97,7 @@ def get_file_system():
 
 def upgrade_required():
     # Obtains show version output
-    sh_version = cli('show version')
+    sh_version = cli.cli('show version')
     # print("---->>>>> sh_version is \n" + sh_version)
     # Check if switch is on approved code: 16.10.01
     # JEREMY WAS HERE
@@ -141,7 +112,7 @@ def upgrade_required():
 def verify_dst_image_md5(image, src_md5, file_system='flash:/'):
     verify_md5 = 'verify /md5 ' + file_system + image
     print 'Verifying MD5 for ' + file_system + image
-    dst_md5 = cli(verify_md5)
+    dst_md5 = cli.clip(verify_md5)
     if src_md5 in dst_md5:
         print '*** MD5 hashes match!! ***\n'
         return True
@@ -199,6 +170,7 @@ def main():
     find_certs()
     time.sleep(10)
 
+    print '*** Deploying Base Configuration ***'
     base_config = [
         "interface Gi0/0 ; no shutdown ; description MGMT ; ip address dhcp ; end",
         "aaa new-model",
@@ -209,9 +181,6 @@ def main():
         "ip route vrf Mgmt-vrf 0.0.0.0 0.0.0.0 192.168.1.1"
 
     ]
-
-
-    print '*** Deploying Base Configuration ***'
     try:
         domain_name = "uwaco.com"
         set_domain = "ip domain name " + domain_name
@@ -219,12 +188,11 @@ def main():
         cli.configurep('crypto key generate rsa modulus 2048')
         for cmd in base_config:
             cli.configurep(cmd)
-
     except Exception as e:
-        pass
+        print("ERROR! Could not apply base config.")
+        print(e)
+
     print '###### FINISHED ZTP SCRIPT ######'
-
-
 
 
 if __name__ in "__main__":
