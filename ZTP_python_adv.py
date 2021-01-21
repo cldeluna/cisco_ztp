@@ -7,7 +7,7 @@ import time
 # https://raw.githubusercontent.com/jeremycohoe/c9300-ztp/master/ztp-advanced.py
 
 # Set Global variables to be used in later functions
-tftp_server = '192.168.1.33'
+http_server = '192.168.1.33'
 # img_cat3k = 'cat3k_caa-universalk9.16.06.04.SPA.bin'
 # img_cat3k_md5 = '41e56e88bb058ca08386763404b3ccb6'
 
@@ -35,18 +35,19 @@ def check_file_exists(file, file_system='flash:/'):
         raise ValueError("Unexpected output from check_file_exists")
 
 
-def file_transfer(tftp_server, file, file_system='flash:/'):
+def file_transfer(server, file, file_system='flash:/', protocol='http'):
     destination = file_system + file
     # Set commands to prepare for file transfer
     commands = ['file prompt quiet',
                 'ip tftp blocksize 8192',
+                'ip tftp source-interface Gi0/0',
                 'ip http client source-interface Gi0/0'
                ]
     results = cli.configurep(commands)
     print '*** Successfully set "file prompt quiet" and 8192 block size on switch ***'
-    # transfer_file = "copy tftp://%s/%s %s vrf Mgmt-vrf" % (tftp_server, file, destination)
-    # transfer_file = "copy http://%s/%s %s vrf Mgmt-vrf" % (tftp_server, file, file_system)
-    transfer_file = "copy http://%s/%s %s" % (tftp_server, file, file_system)
+    # transfer_file = "copy tftp://%s/%s %s vrf Mgmt-vrf" % (server, file, destination)
+    # transfer_file = "copy http://%s/%s %s vrf Mgmt-vrf" % (server, file, file_system)
+    transfer_file = "copy %s://%s/%s %s" % (protocol, server, file, file_system)
     print("---->>>>> transfer_file is " + transfer_file)
     print 'Transferring %s to %s' % (file, file_system)
     transfer_results = cli.cli(transfer_file)
@@ -134,11 +135,11 @@ def main():
         if check_file_exists(img_cat9k):
             if not verify_dst_image_md5(img_cat9k, img_cat9k_md5):
                 print('*** Attempting to transfer image to switch.. ***')
-                file_transfer(tftp_server, img_cat9k)
+                file_transfer(http_server, img_cat9k)
                 if not verify_dst_image_md5(img_cat9k, img_cat9k_md5):
                     raise ValueError('Failed Xfer')
         else:
-            file_transfer(tftp_server, img_cat9k)
+            file_transfer(http_server, img_cat9k)
             if not verify_dst_image_md5(img_cat9k, img_cat9k_md5):
                 raise ValueError('XXX Failed Xfer XXX')
 
@@ -165,7 +166,7 @@ def main():
         cli.configurep("\n")
 
     print("===== Transferring Configuration File =====")
-    file_transfer(tftp_server, config_file)
+    file_transfer(http_server, config_file)
     time.sleep(10)
     print '*** Removing any existing certs ***'
     find_certs()
@@ -175,7 +176,7 @@ def main():
     hostname = "hostname SW_" + serial
     base_config = [
         hostname,
-        "interface Gi0/0 ; no shutdown ; description MGMT ; ip address dhcp ; end",
+        "interface GigabitEthernet0/0 ;description MGMT ;ip address dhcp ;no shutdown; end",
         "aaa new-model",
         "aaa authentication login default local",
         "aaa authorization exec default local",
