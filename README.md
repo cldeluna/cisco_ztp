@@ -81,15 +81,39 @@ Requirements:
 
 
 
-### Install Modules into your Virtual Environment
-
 
 
 
 
 ### Invoke Your Virtual Environment
 
-From your repository
+From your repository with your 
+
+```
+
+```
+
+
+
+
+
+### Install Modules into your Virtual Environment
+
+```
+pip install -r requirements.txt
+```
+
+
+
+
+
+### Clone Network To Code TextFSM Repository
+
+[NTC Template Repository](https://github.com/networktocode/ntc-templates)
+
+Via CLI or GitHub Desktop
+
+Git clone https://github.com/networktocode/ntc-templates.git 
 
 
 
