@@ -2,7 +2,94 @@
 
 
 
+![cisco_ztp](images/cisco_ztp.jpeg)
+
+
+
+
+
 This work all started from Jeremy Cohoe's excellent [repository](https://github.com/jeremycohoe/c9300-ztp) and [post](https://blogs.cisco.com/developer/device-provisioning-with-ios-xe-zero-touch-provisioning).
+
+
+
+# Getting Started
+
+
+
+### Requirements
+
+- [Python3](https://www.python.org/downloads/)
+  - Make sure you select the option to update your PATH variable so that you can run python3 from any directory on your laptop.
+- [Git](https://git-scm.com/downloads)
+  - This may be optional with GitHub Desktop
+- [GitHub Desktop](https://desktop.github.com/)
+- A good text editor like Atom or Sublime
+- [HTTP File Server](https://www.rejetto.com/hfs/)
+- (Optional) TFTP Server like [TFTPD64](http://tftpd32.jounin.net/tftpd32_download.html)
+- (Optional) IDE like Visual Studio Code or PyCharm
+
+
+
+### Define your Virtual Environment
+
+Its a very strong recommendation that you use virtual environments with Python.  A virtual environment is an "instance" of python that has all the modules you need for a given repository.  Over time you will use different repositories and develop ones of your own using different python modules for different things.  Putting all of those modules in your main Python instance will get messy very fast.
+
+I like to establish a specific directory where I keep all of my virtual environments. Typically this is as close to the root directory as feasible so that you work with short paths.   
+
+To invoke or "activate" your virtual environment you need to refer the the exact path of the virtual environment activation file which is why a short path is nice.   An IDE can help with that once you tire of having to use the direct path.
+
+
+
+```
+python -m venv <name of the directory and virtual env>
+```
+
+
+
+![create_venv_option1_dir](images\create_venv_option1_dir.gif)
+
+
+
+### Clone this Repository 
+
+##### Clone using git
+
+Requirements:
+
+- git
+
+
+
+```
+git clone https://github.com/cldeluna/cisco_ztp.git
+```
+
+
+
+![clone_repo_git](images\clone_repo_git.gif)
+
+
+
+##### Clone using GitHub Desktop
+
+Requirements:
+
+- GitHub Desktop
+- GitHub Account
+
+![clone_repo_github_desktop](images/clone_repo_github_desktop.gif)
+
+
+
+### Install Modules into your Virtual Environment
+
+
+
+
+
+### Invoke Your Virtual Environment
+
+From your repository
 
 
 

@@ -1,0 +1,12 @@
+celebes-sw05#show ip dhcp binding
+Bindings from all pools not associated with VRF:
+IP address      Client-ID/ 		Lease expiration 	Type       State      Interface
+		Hardware address/
+		User name
+192.168.1.67    0046.4f43.3233.3434.    Jan 22 2021 05:32 PM    Automatic  Active     Vlan1
+                4c35.3346
+192.168.1.68    0063.6973.636f.2d33.    Jan 22 2021 05:32 PM    Automatic  Active     Vlan1
+                6335.312e.3065.3331.
+                2e35.3238.302d.4769.
+                302f.30
+celebes-sw05#

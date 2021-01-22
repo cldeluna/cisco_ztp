@@ -1,0 +1,12 @@
+Value Required IP ((?:[0-9]{1,3}\.){3}[0-9]{1,3})
+Value Required HW_ADDR (\S+)
+Value Required LEASE_EXP (\S+)
+Value Required TYPE ([0-9]+)
+Value Required STATE (\S+)
+Value Required INTERFACE (\S+)
+
+
+Start
+  ^\s*IpAddress\s*Client-ID\/\s*Lease expiration\s*Type\s*State\s*Interface\s*
+  ^${IP}\s+${HW_ADDR}\s+${LEASE_EXP}\s+${TYPE}\s+${STATE}\s+${INTERFACE} -> Record
+
