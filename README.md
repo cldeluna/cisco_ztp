@@ -46,7 +46,7 @@ python -m venv <name of the directory and virtual env>
 
 
 
-![create_venv_option1_dir](images\create_venv_option1_dir.gif)
+![create_venv_option1_dir](images/create_venv_option1_dir.gif)
 
 
 
@@ -66,7 +66,7 @@ git clone https://github.com/cldeluna/cisco_ztp.git
 
 
 
-![clone_repo_git](images\clone_repo_git.gif)
+![clone_repo_git](images/clone_repo_git.gif)
 
 
 
