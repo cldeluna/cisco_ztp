@@ -18,7 +18,7 @@ This work all started from Jeremy Cohoe's excellent [repository](https://github.
 
 ### Requirements
 
-- [Python3](https://www.python.org/downloads/)
+- [Python3 ](https://www.python.org/downloads/) (3.8)
   - Make sure you select the option to update your PATH variable so that you can run python3 from any directory on your laptop.
 - [Git](https://git-scm.com/downloads)
   - This may be optional with GitHub Desktop
