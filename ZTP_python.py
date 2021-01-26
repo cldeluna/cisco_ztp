@@ -201,8 +201,8 @@ def main():
 
     print '*** Deploying Configuration ***'
     try:
-    	print("------- >>>>> config_file is " + config_file)
-    	# print(dir(configure))
+        print("------- >>>>> config_file is " + config_file)
+        # print(dir(configure))
         # configure_replace(config_file, file_system="flash:/")
         configure('crypto key generate rsa modulus 4096')
         # load_cfg = 'copy flash:' + config_file + ' running-config'

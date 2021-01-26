@@ -3,23 +3,6 @@ import re
 import json
 import time
 
-# source
-# https://raw.githubusercontent.com/jeremycohoe/c9300-ztp/master/ztp-advanced.py
-
-# Set Global variables to be used in later functions
-http_server = '192.168.1.33'
-# img_cat3k = 'cat3k_caa-universalk9.16.06.04.SPA.bin'
-# img_cat3k_md5 = '41e56e88bb058ca08386763404b3ccb6'
-
-img_cat9k = 'cat9k_iosxe.16.12.01.SPA.bin'
-img_cat9k_md5 = '58755699355bb269be61e334ae436685'
-software_version = 'Cisco IOS XE Software, Version 16.12.01'
-
-img_cat9k = 'cat9k_iosxe.16.12.02.SPA.bin'
-img_cat9k_md5 = '0d3e18f63f9ca52b6b056b27aa0d09e5'
-software_version = 'Cisco IOS XE Software, Version 16.12.02'
-
-
 
 def check_file_exists(file, file_system='flash:/'):
     dir_check = 'dir ' + file_system + file
@@ -90,26 +73,21 @@ def get_serial():
     return serial
 
 
-def get_model():
-    pass
-
-
-def get_file_system():
-    pass
-
-def upgrade_required():
+def upgrade_required(sw_version):
     # Obtains show version output
     sh_version = cli.cli('show version')
     # print("---->>>>> sh_version is \n" + sh_version)
+    print('\n====== Software Version Check %s ======' % sw_version)
     # Check if switch is on approved code: 16.10.01
     # JEREMY WAS HERE
     #match = re.search('%s', sh_version) (software_version)
     # JEREMY WAS HERE
     # Returns False if on approved version or True if upgrade is required
-    if software_version in sh_version:
+    if sw_version in sh_version:
         return False
     else:
         return True
+
 
 def verify_dst_image_md5(image, src_md5, file_system='flash:/'):
     verify_md5 = 'verify /md5 ' + file_system + image
@@ -122,57 +100,62 @@ def verify_dst_image_md5(image, src_md5, file_system='flash:/'):
         print 'XXX MD5 hashes DO NOT match. XXX'
         return False
 
-def main():
-    print '###### STARTING ZTP INITIALIZATION SCRIPT ######'
-    print '\n*** Obtaining serial number of device.. ***'
-    serial = get_serial()
-    print('*** Setting configuration file variable.. ***')
-    config_file = "{}.cfg".format(serial)
-    print('*** Config file: %s ***' % config_file)
 
-    if upgrade_required():
-        print '*** Upgrade is required. Starting upgrade process.. ***\n'
+def main():
+    # source
+    # https://raw.githubusercontent.com/jeremycohoe/c9300-ztp/master/ztp-advanced.py
+
+    # Set Global variables to be used in later functions
+    http_server = '192.168.1.33'
+
+    # img_cat9k = 'cat9k_iosxe.16.12.01.SPA.bin'
+    # img_cat9k_md5 = '58755699355bb269be61e334ae436685'
+    # software_version = 'Cisco IOS XE Software, Version 16.12.01'
+
+    img_cat9k = 'cat9k_iosxe.16.12.02.SPA.bin'
+    img_cat9k_md5 = '0d3e18f63f9ca52b6b056b27aa0d09e5'
+    software_version = 'Cisco IOS XE Software, Version 16.12.02'
+
+    print('====== STARTING ZTP INITIALIZATION SCRIPT ======')
+    print('\n=== Obtaining serial number of device.. ===')
+    serial = get_serial()
+    print('\n\t--- ' + serial)
+    print('--- Setting configuration file variable.. ---')
+    config_file = "{}.cfg".format(serial)
+    print('\n\t--- %s' % config_file)
+
+    # Check to see if software upgrade is required:
+    upgr_required = upgrade_required(software_version)
+    if upgr_required:
+        print('=== Upgrade is required. Starting Image File Transfer... ===\n')
         if check_file_exists(img_cat9k):
             if not verify_dst_image_md5(img_cat9k, img_cat9k_md5):
-                print('*** Attempting to transfer image to switch.. ***')
+                print('--- Attempting to transfer new image to switch after failed md5 check... ---')
                 file_transfer(http_server, img_cat9k)
                 if not verify_dst_image_md5(img_cat9k, img_cat9k_md5):
                     raise ValueError('Failed Xfer')
         else:
+            print('--- Attempting to transfer image to switch.. ---')
             file_transfer(http_server, img_cat9k)
             if not verify_dst_image_md5(img_cat9k, img_cat9k_md5):
                 raise ValueError('XXX Failed Xfer XXX')
 
-        # print '*** Deploying EEM upgrade script ***'
-        # #install_activate_commit(img_cat9k)
-        # deploy_eem_upgrade_script(img_cat9k)
-        # print '*** Performing the upgrade - switch will reboot ***\n'
-        # cli('event manager run upgrade')
-        # time.sleep(600)
     else:
-        print '*** No upgrade is required!!! ***'
-
-    # Cleanup any leftover install files
-    # print '*** Deploying Cleanup EEM Script ***'
-    # deploy_eem_cleanup_script()
-    # print '*** Running Cleanup EEM Script ***'
-    # cli('event manager run cleanup')
-    # time.sleep(30)
+        print('--- No upgrade is required!!! ---')
 
     if check_file_exists(config_file):
         print("===== Deleting Existing Staged Configuration File =====")
-        del_cfg = "del flash:" + config_file
+        del_cfg = "del \force flash:" + config_file
         cli.clip(del_cfg)
-        cli.clip("\n")
 
     print("===== Transferring Configuration File =====")
     file_transfer(http_server, config_file)
     time.sleep(10)
-    print '*** Removing any existing certs ***'
+    print('--- Removing any existing certs ---')
     find_certs()
     time.sleep(10)
 
-    print '*** Deploying Base Configuration ***'
+    print('--- Deploying Base Configuration ---')
     hostname = "hostname SW_" + serial
     base_config = [
         hostname,
@@ -193,18 +176,18 @@ def main():
             cli.configurep(cmd)
         cli.clip("configure terminal ; interface GigabitEthernet0/0 ; description MGMT_INT ; ip address dhcp ; no shutdown")
         cli.clip("copy running-config startup-config")
-        install_command = 'install add file flash:' + image + ' activate commit'
-        print("install command")
-        print(install_command)
-        cli.clip(install_command)
-        print("--->>> No don't save config")
-        cli.clip("n\n")
-        print("--->>> wait 600")
-        time.sleep(600)
-        print("--->>> Yes reboot")
-        cli.clip("y\n")
-        print("--->>> wait 600")
-        time.sleep(600)
+        # install_command = 'install add file flash:' + image + ' activate commit'
+        # print("install command")
+        # print(install_command)
+        # cli.clip(install_command)
+        # print("--->>> No don't save config")
+        # cli.clip("n\n")
+        # print("--->>> wait 600")
+        # time.sleep(600)
+        # print("--->>> Yes reboot")
+        # cli.clip("y\n")
+        # print("--->>> wait 600")
+        # time.sleep(600)
         copy_cfg = "copy flash:" + config_file + " running-config"
         print("---->>>> Load config file into running configuration:")
         print(copy_cfg)
@@ -215,7 +198,7 @@ def main():
         print("ERROR! Could not apply base config.")
         print(e)
 
-    print '###### FINISHED ZTP SCRIPT ######'
+    print('###### FINISHED ZTP SCRIPT ######')
 
 
 if __name__ in "__main__":
