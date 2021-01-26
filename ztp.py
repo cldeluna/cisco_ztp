@@ -2,6 +2,7 @@ import cli
 import re
 import json
 import time
+import argparse
 
 
 def check_file_exists(file, file_system='flash:/'):
