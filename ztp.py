@@ -171,8 +171,8 @@ def main():
     try:
         domain_name = "uwaco.com"
         set_domain = "ip domain name " + domain_name
-        cli.configurep(set_domain)
-        cli.configurep('crypto key generate rsa modulus 2048')
+        # cli.configurep(set_domain)
+        # cli.configurep('crypto key generate rsa modulus 2048')
         for cmd in base_config:
             cli.configurep(cmd)
         cli.clip("configure terminal ; interface GigabitEthernet0/0 ; description MGMT_INT ; ip address dhcp ; no shutdown")
@@ -190,11 +190,13 @@ def main():
         # print("--->>> wait 600")
         # time.sleep(600)
         copy_cfg = "copy flash:" + config_file + " running-config"
-        print("---->>>> Load config file into running configuration:")
+        print("---->>>> Load config file {} into running configuration:".format(config_file))
+        print("\t{}".format(copy_cfg))
         print(copy_cfg)
         result = cli.cli(copy_cfg)
         print("Load Result")
         print(result)
+        cli.configurep('crypto key generate rsa modulus 2048')
     except Exception as e:
         print("ERROR! Could not apply base config.")
         print(e)
