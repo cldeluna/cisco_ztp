@@ -113,9 +113,9 @@ def main():
     # img_cat9k_md5 = '58755699355bb269be61e334ae436685'
     # software_version = 'Cisco IOS XE Software, Version 16.12.01'
 
-    img_cat9k = 'cat9k_iosxe.16.12.02.SPA.bin'
-    img_cat9k_md5 = '0d3e18f63f9ca52b6b056b27aa0d09e5'
-    software_version = 'Cisco IOS XE Software, Version 16.12.02'
+    img_cat9k = 'cat9k_iosxe.16.12.04.SPA.bin'
+    img_cat9k_md5 = '16e8583ca6184c54f9d9fccf4574fa6e'
+    software_version = 'Cisco IOS XE Software, Version 16.12.04'
 
     print('====== STARTING ZTP INITIALIZATION SCRIPT ======')
     print('\n=== Obtaining serial number of device.. ===')
