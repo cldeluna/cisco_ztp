@@ -146,7 +146,7 @@ def main():
 
     if check_file_exists(config_file):
         print("===== Deleting Existing Staged Configuration File =====")
-        del_cfg = "del \force flash:" + config_file
+        del_cfg = "del /force flash:" + config_file
         cli.clip(del_cfg)
 
     print("===== Transferring Configuration File =====")
@@ -169,8 +169,8 @@ def main():
         "ip route vrf Mgmt-vrf 0.0.0.0 0.0.0.0 192.168.1.1"
     ]
     try:
-        domain_name = "uwaco.com"
-        set_domain = "ip domain name " + domain_name
+        # domain_name = "uwaco.com"
+        # set_domain = "ip domain name " + domain_name
         # cli.configurep(set_domain)
         # cli.configurep('crypto key generate rsa modulus 2048')
         for cmd in base_config:
@@ -196,6 +196,10 @@ def main():
         result = cli.cli(copy_cfg)
         print("Load Result")
         print(result)
+        domain_name = "net.cat.com"
+        set_domain = "ip domain name " + domain_name
+        print("===== Generating Crypto Key for domain %s =====".format(domain_name))
+        cli.configurep(set_domain)
         cli.configurep('crypto key generate rsa modulus 2048')
     except Exception as e:
         print("ERROR! Could not apply base config.")
