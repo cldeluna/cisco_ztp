@@ -7,13 +7,13 @@ import argparse
 
 def check_file_exists(file, file_system='flash:/'):
     dir_check = 'dir ' + file_system + file
-    print '*** Checking to see if %s exists on %s ***' % (file, file_system)
+    print '\n====== Checking to see if %s exists on %s ======' % (file, file_system)
     results = cli.cli(dir_check)
     if 'No such file or directory' in results:
-        print '*** The %s does NOT exist on %s ***' % (file, file_system)
+        print '\t--- The %s does NOT exist on %s ---' % (file, file_system)
         return False
     elif 'Directory of %s%s' % (file_system, file) in results:
-        print '*** The %s DOES exist on %s ***' % (file, file_system)
+        print '\t--- The %s DOES exist on %s ---' % (file, file_system)
         return True
     else:
         raise ValueError("Unexpected output from check_file_exists")
@@ -117,7 +117,7 @@ def main():
     img_cat9k_md5 = '16e8583ca6184c54f9d9fccf4574fa6e'
     software_version = 'Cisco IOS XE Software, Version 16.12.04'
 
-    print('====== STARTING ZTP INITIALIZATION SCRIPT ======')
+    print('\n====== STARTING ZTP INITIALIZATION SCRIPT ======')
     print('\n=== Obtaining serial number of device.. ===')
     serial = get_serial()
     print('\n\t--- ' + serial)
