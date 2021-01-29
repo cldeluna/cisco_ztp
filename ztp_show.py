@@ -60,6 +60,8 @@ def ztp_dev_list(dev, shcmd="show ip dhcp binding"):
         #     print(ip)
 
     except Exception as e:
+        res = []
+        print("!Error - Netmiko connection to device failed!")
         print(e)
 
     return res
