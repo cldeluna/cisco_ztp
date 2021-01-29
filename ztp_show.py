@@ -143,7 +143,7 @@ def main():
                 cmds = []
                 cmds.append(arguments.show_cmd)
             elif re.search('ios', devdict['device_type']):
-                cmds = cmd_dict['ios_show_commands']
+                cmds = cmd_dict['staging_commands']
             elif re.search('nxos', devdict['device_type']):
                 cmds = cmd_dict['nxos_show_commands']
             elif re.search('wlc', devdict['device_type']):
