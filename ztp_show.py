@@ -108,7 +108,7 @@ def main():
     devs = []
 
     for line in bindings_parsed:
-        print(line)
+        # print(line)
         devs.append(line[0])
 
     if devs:
