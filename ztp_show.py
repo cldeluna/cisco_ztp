@@ -35,6 +35,27 @@ def text_fsm_parse(template_fn, data):
     return fsm_results
 
 
+
+def get_show_cmd(dev, shcmd="show ip dhcp binding"):
+
+    # RAW Parsing with Python
+    response = ''
+    try:
+        dev_conn = netmiko.ConnectHandler(**dev)
+        dev_conn.enable()
+        response = dev_conn.send_command(shcmd)
+        # print(f"\nResponse is of type {type(response)}\n")
+        # print(response)
+        # because the response is a string we need to do some string manipulation
+        # first we need to split the string into lines
+
+    except Exception as e:
+        print("!Error - Netmiko connection to device failed!")
+        print(e)
+
+    return response
+
+
 def ztp_dev_list(dev, shcmd="show ip dhcp binding"):
 
     # Only needed when parsing from Netmiko directly
@@ -107,7 +128,11 @@ def main():
     for dev in devs:
         print(f"\n\n==== Device {dev}")
         devdict = utils.create_cat_devobj_from_json_list(dev)
-        print(devdict)
+
+        hn_response = get_show_cmd(dev, shcmd="show run | i hostname")
+        hostname = hn_response.split()[1]
+        print(hostname)
+
         if devdict['device_type'] in ['cisco_ios', 'cisco_nxos', 'cisco_wlc']:
             if arguments.show_cmd:
                 cmds = []
