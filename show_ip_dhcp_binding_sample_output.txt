@@ -9,4 +9,9 @@ IP address      Client-ID/ 		Lease expiration 	Type       State      Interface
                 6335.312e.3065.3331.
                 2e35.3238.302d.4769.
                 302f.30
-celebes-sw05#
+192.168.1.76    0063.6973.636f.2d33.    Jan 30 2021 03:55 AM    Automatic  Active     Vlan1
+                6335.312e.3065.3331.
+                2e35.3238.302d.4769.
+                302f.30
+192.168.1.77    018c.ae4c.f400.f8       Jan 30 2021 01:13 PM    Automatic  Active     Vlan1
+celebes-sw06#
