@@ -133,7 +133,7 @@ def main():
         hn_response = utils.conn_and_get_output(devdict, hn_cmd)
         # print(hn_response)
         if len(hn_response) >= 7:
-            hostname = hn_response.split(" ")[7]
+            hostname = hn_response.split(" ")[7].strip()
             print(f"\n---- Hostname {hostname}")
         else:
             hostname = dev
