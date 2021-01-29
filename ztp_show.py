@@ -132,8 +132,8 @@ def main():
         hn_cmd = ["show run | i hostname"]
         hn_response = utils.conn_and_get_output(devdict, hn_cmd)
         print(hn_response)
-        # hostname = hn_response.split()[1]
-        # print(hostname)
+        hostname = hn_response.split()[1]
+        print(hostname)
 
         if devdict['device_type'] in ['cisco_ios', 'cisco_nxos', 'cisco_wlc']:
             if arguments.show_cmd:
