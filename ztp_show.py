@@ -66,6 +66,7 @@ def ztp_dev_list(dev, shcmd="show ip dhcp binding"):
 
     return res
 
+
 def main():
 
 
@@ -88,7 +89,14 @@ def main():
     for line in bindings_parsed:
         print(line)
         devs.append(line[0])
-    print(devs)
+
+    if devs:
+        print(f"The following IPs were found on the ZTP DHCP Server:")
+        for d in devs:
+            print(d)
+    else:
+        print(f"No staged devices were found!")
+        exit("Aborting Run")
 
     fn = "show_cmds.yml"
     cmd_dict = utils.read_yaml(fn)
