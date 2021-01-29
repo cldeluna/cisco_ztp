@@ -130,8 +130,9 @@ def main():
         devdict = utils.create_cat_devobj_from_json_list(dev)
 
         hn_response = get_show_cmd(dev, shcmd="show run | i hostname")
-        hostname = hn_response.split()[1]
-        print(hostname)
+        print(hn_response)
+        # hostname = hn_response.split()[1]
+        # print(hostname)
 
         if devdict['device_type'] in ['cisco_ios', 'cisco_nxos', 'cisco_wlc']:
             if arguments.show_cmd:
