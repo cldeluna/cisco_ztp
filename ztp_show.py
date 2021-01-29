@@ -130,7 +130,7 @@ def main():
         devdict = utils.create_cat_devobj_from_json_list(dev)
 
         hn_cmd = ["show run | i hostname"]
-        hn_response = utils.conn_and_get_output(devdict, hn_response)
+        hn_response = utils.conn_and_get_output(devdict, hn_cmd)
         print(hn_response)
         # hostname = hn_response.split()[1]
         # print(hostname)
