@@ -129,7 +129,8 @@ def main():
         print(f"\n\n==== Device {dev}")
         devdict = utils.create_cat_devobj_from_json_list(dev)
 
-        hn_response = get_show_cmd(dev, shcmd="show run | i hostname")
+        hn_cmd = ["show run | i hostname"]
+        hn_response = utils.conn_and_get_output(devdict, hn_response)
         print(hn_response)
         # hostname = hn_response.split()[1]
         # print(hostname)
