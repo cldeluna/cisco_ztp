@@ -21,7 +21,7 @@ import json
 import os
 import re
 import dotenv
-import add_2env
+# import add_2env
 import shutil
 import ntpath
 import datetime
@@ -244,7 +244,7 @@ def create_cat_devobj_from_json_list(dev):
         # dev_obj.update({'username': 'admin'})
         # dev_obj.update({'password': 'A123m!'})
         # dev_obj.update({'secret': 'A123m!'})
-    elif re.search('10.1.10.', dev, re.IGNORECASE) or re.search('1.1.1.', dev, re.IGNORECASE):
+    elif re.search('10.1.10.', dev, re.IGNORECASE) or re.search('1.1.1.', dev, re.IGNORECASE) or re.search('192.168.1', dev, re.IGNORECASE):
         dev_obj.update({'device_type': 'cisco_ios'})
     else:
         dev_obj.update({'device_type': 'unknown'})
