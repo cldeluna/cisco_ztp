@@ -131,9 +131,12 @@ def main():
 
         hn_cmd = ["show run | i hostname"]
         hn_response = utils.conn_and_get_output(devdict, hn_cmd)
-        print(hn_response)
-        hostname = hn_response.split(" ")[7]
-        print(hostname)
+        # print(hn_response)
+        if len(hn_response) >= 7:
+            hostname = hn_response.split(" ")[7]
+            print(f"\n---- Hostname {hostname}")
+        else:
+            hostname = dev
 
         if devdict['device_type'] in ['cisco_ios', 'cisco_nxos', 'cisco_wlc']:
             if arguments.show_cmd:
@@ -149,7 +152,7 @@ def main():
                 cmds = cmd_dict['general_show_commands']
             resp = utils.conn_and_get_output(devdict, cmds)
             # print(resp)
-            output_dir = os.path.join(os.getcwd(), arguments.output_subdir, f"{dev}.txt")
+            output_dir = os.path.join(os.getcwd(), arguments.output_subdir, f"{hostname}.txt")
             utils.write_txt(output_dir, resp)
 
 
