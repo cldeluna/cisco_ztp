@@ -103,7 +103,7 @@ def main():
     #
     dev = {
         'device_type': 'cisco_ios',
-        'ip' : '10.1.10.216',
+        'ip' : '192.168.1.1',
         'username' : user,
         'password' : pwd,
         'secret' : sec,
