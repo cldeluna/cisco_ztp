@@ -13,8 +13,10 @@ __copyright__ = "Copyright (c) 2018 Claudia"
 __license__ = "Python"
 
 import argparse
+import datetime
 import netmiko
 import textfsm
+import shutil
 import os
 import re
 import utils
@@ -91,13 +93,17 @@ def ztp_dev_list(dev, shcmd="show ip dhcp binding"):
 def main():
 
 
+    datestamp = datetime.date.today()
+    print(f"===== Date is {datestamp} ====")
+
+    # Seed the ZTP Hub Switch
     user = 'admin'
     pwd = 'eia!now'
     sec = 'eia!now'
     #
     dev = {
         'device_type': 'cisco_ios',
-        'ip' : '192.168.1.1',
+        'ip' : '10.1.10.216',
         'username' : user,
         'password' : pwd,
         'secret' : sec,
@@ -151,9 +157,49 @@ def main():
             else:
                 cmds = cmd_dict['general_show_commands']
             resp = utils.conn_and_get_output(devdict, cmds, debug=True)
-            # print(resp)
-            output_dir = os.path.join(os.getcwd(), arguments.output_subdir, f"{hostname}.txt")
-            utils.write_txt(output_dir, resp)
+            # print(f"response is {resp}!")
+            if resp:
+                output_dir = os.path.join(os.getcwd(), arguments.output_subdir, f"{hostname}.txt")
+                utils.write_txt(output_dir, resp)
+            else:
+                print(f"Device {dev} has no data!")
+
+
+
+    ##  Zip the Dir
+    # path to folder which needs to be zipped
+    directory = f"./{arguments.output_subdir}"
+
+    # calling function to get all file paths in the directory
+    file_paths = utils.get_all_file_paths(directory)
+
+    # writing files to a zipfile
+    # Create zipfile name with timestamp
+
+    # Optional Note to distinguish or annotate the show commands
+    if arguments.note:
+        note_text = utils.replace_space(arguments.note)
+        zip_basefn = f"{arguments.output_subdir}_{datestamp}_{note_text}"
+    else:
+        zip_basefn = f"{arguments.output_subdir}_{datestamp}"
+
+    if arguments.show_cmd:
+        formatted_shcmd = utils.replace_space(arguments.show_cmd, debug=True)
+        zip_fn = f"{zip_basefn}_{formatted_shcmd}"
+    else:
+        zip_fn = f"{zip_basefn}"
+
+    if len(file_paths) > 0:
+        # printing the list of all files to be zipped
+        print('The following files will be zipped:')
+        for file_name in file_paths:
+            print(file_name)
+        shutil.make_archive(zip_fn, 'zip', directory)
+        print(f"All files zipped successfully to Zip file {zip_fn}!\n\n")
+    else:
+        print(f"No files with data to ZIP!")
+
+
 
 
 # Standard call to the main() function.
